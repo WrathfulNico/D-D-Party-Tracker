@@ -143,7 +143,7 @@ function renderPlayer(playerIndex) {
         }
     }
     
-    // ===== ACTUALIZADO: Generar HTML para los consumibles como en v15.html =====
+    // Generar HTML para los consumibles
     let consumablesHTML = '';
     if (playerData.inventario && playerData.inventario.consumibles && playerData.inventario.consumibles.length > 0) {
         playerData.inventario.consumibles.forEach((item, itemIndex) => {
@@ -212,7 +212,7 @@ function renderPlayer(playerIndex) {
         });
     }
     
-    // Generar HTML para los objetos equipados (MODIFICADO)
+    // Generar HTML para los objetos equipados
     let equippedHTML = '';
     if (playerData.equipado) {
         for (const [slot, itemName] of Object.entries(playerData.equipado)) {

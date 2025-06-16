@@ -371,7 +371,7 @@ h1 {
 .equipped-item {
     background: linear-gradient(145deg, rgba(138, 79, 125, 0.4), rgba(92, 45, 145, 0.4));
     border-radius: 8px;
-    padding: 15px; /* Aumentar padding */
+    padding: 15px; 
     border: 1px solid var(--secondary);
     position: relative;
     box-shadow: 0 3px 6px rgba(0,0,0,0.2);
