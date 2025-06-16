@@ -102,6 +102,7 @@ fileInputs.forEach(input => {
 
 // Función para renderizar los datos de un jugador específico
 function renderPlayer(playerIndex) {
+    // Crear array de objetos equipados
     const playerData = playersData[playerIndex];
     const playerContent = document.getElementById(`player${playerIndex+1}-data`);
     
@@ -114,7 +115,7 @@ function renderPlayer(playerIndex) {
         `;
         return;
     }
-    
+    const equippedItems = playerData.equipado ? Object.values(playerData.equipado) : [];
     const healthPercentage = (playerData.salud.actual / playerData.salud.máxima) * 100;
     const healthColor = healthPercentage > 70 ? '#4caf50' : 
                         healthPercentage > 30 ? '#ff9800' : '#d32f2f';
@@ -173,6 +174,9 @@ function renderPlayer(playerIndex) {
     let itemsHTML = '';
     if (playerData.inventario && playerData.inventario.objetos && playerData.inventario.objetos.length > 0) {
         playerData.inventario.objetos.forEach((item, itemIndex) => {
+            // Verificar si el objeto está equipado
+            const isEquipped = equippedItems.includes(item.nombre);
+            
             let details = '';
             let properties = '';
             
@@ -189,7 +193,8 @@ function renderPlayer(playerIndex) {
             }
             
             itemsHTML += `
-                <div class="inventory-item">
+                <div class="inventory-item ${isEquipped ? 'equipped' : ''}">
+                    ${isEquipped ? '<div class="equipped-tag">EQUIPADO</div>' : ''}
                     <h4>${item.nombre}</h4>
                     <p><strong>Tipo:</strong> ${item.tipo}</p>
                     ${details}
@@ -207,19 +212,23 @@ function renderPlayer(playerIndex) {
         });
     }
     
-    // Generar HTML para los objetos equipados
+    // Generar HTML para los objetos equipados (MODIFICADO)
     let equippedHTML = '';
     if (playerData.equipado) {
         for (const [slot, itemName] of Object.entries(playerData.equipado)) {
             equippedHTML += `
                 <div class="equipped-item">
-                    <h4>${slot.replace('_', ' ').toUpperCase()}</h4>
+                    <div class="equipped-header">
+                        <h4>${slot.replace('_', ' ').toUpperCase()}</h4>
+                        <button class="unequip-btn" onclick="unequipItem(${playerIndex}, '${slot}')">
+                            <i class="fas fa-times"></i> Quitar
+                        </button>
+                    </div>
                     <p>${itemName}</p>
                 </div>
             `;
         }
-    }
-    
+    }    
     // Generar HTML para estados alterados
     let conditionsHTML = '';
     if (playerData.estados && playerData.estados.length > 0) {
@@ -671,11 +680,42 @@ function deleteItem(playerIndex, type, itemIndex) {
         }
     } else if (type === 'objeto') {
         if (playerData.inventario && playerData.inventario.objetos) {
+            const deletedItem = playerData.inventario.objetos[itemIndex];
+            
+            // Verificar si el objeto está equipado y desequiparlo
+            if (playerData.equipado) {
+                for (const slot in playerData.equipado) {
+                    if (playerData.equipado[slot] === deletedItem.nombre) {
+                        delete playerData.equipado[slot];
+                        break;
+                    }
+                }
+            }
+            
             playerData.inventario.objetos.splice(itemIndex, 1);
         }
     }
     
     renderPlayer(playerIndex);
+}
+
+// Función para desequipar un objeto (NUEVA)
+function unequipItem(playerIndex, slot) {
+    const playerData = playersData[playerIndex];
+    if (!playerData.equipado) return;
+    
+    // Normalizar el slot a minúsculas
+    const normalizedSlot = slot.toLowerCase();
+    
+    // Buscar el slot real (puede tener diferentes mayúsculas)
+    const realSlot = Object.keys(playerData.equipado).find(
+        s => s.toLowerCase() === normalizedSlot
+    );
+    
+    if (realSlot) {
+        delete playerData.equipado[realSlot];
+        renderPlayer(playerIndex);
+    }
 }
 
 // Función para equipar automáticamente según el tipo
@@ -721,9 +761,18 @@ function autoEquipItem(playerIndex, type, itemIndex) {
         case 'abalorio':
             slot = 'abalorio';
             break;
+        case 'canalizador magico': // Nuevo tipo
+            slot = 'canalizador';
+            break;
+        case 'Collar': // Nuevo tipo
+            slot = 'collar';
+            break;
+        case 'Colla': // Para manejar posibles errores de escritura
+            slot = 'collar';
+            break;
         default:
-            // Para otros tipos, no hacemos nada
-            return;
+            // Para otros tipos, crear slot basado en tipo
+            slot = item.tipo.toLowerCase().replace(/\s+/g, '_');
     }
     
     // Crear objeto equipado si no existe

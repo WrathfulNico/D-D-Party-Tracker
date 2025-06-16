@@ -371,23 +371,20 @@ h1 {
 .equipped-item {
     background: linear-gradient(145deg, rgba(138, 79, 125, 0.4), rgba(92, 45, 145, 0.4));
     border-radius: 8px;
-    padding: 12px;
+    padding: 15px; /* Aumentar padding */
     border: 1px solid var(--secondary);
     position: relative;
     box-shadow: 0 3px 6px rgba(0,0,0,0.2);
+    margin-bottom: 10px; 
 }
 
-.equipped-item::before {
-    content: 'EQUIPADO';
-    position: absolute;
-    top: -10px;
-    right: 10px;
-    background: var(--success);
-    color: white;
-    font-size: 0.6rem;
-    padding: 2px 8px;
-    border-radius: 10px;
-    font-weight: bold;
+.equipped-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid rgba(138, 79, 125, 0.3);
 }
 
 .control-btn {
@@ -1038,4 +1035,64 @@ footer {
 
 .use-consumable-btn:hover {
     background: var(--success);
+}
+
+/* Etiqueta para objetos equipados en inventario */
+.equipped-tag {
+    position: absolute;
+    top: -8px;
+    right: 10px;
+    background: var(--success);
+    color: white;
+    font-size: 0.7rem;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-weight: bold;
+}
+
+.inventory-item.equipped {
+    border: 2px solid var(--success);
+    position: relative;
+    padding-top: 15px; /* Para dar espacio a la etiqueta */
+}
+
+/* Cabecera para objetos equipados */
+.equipped-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 5px;
+    position: relative;
+}
+
+.equipped-header h4 {
+    font-size: 1.1rem;
+    color: var(--highlight);
+    text-shadow: 0 0 5px rgba(230, 213, 247, 0.3);
+}
+
+.unequip-btn {
+    background: rgba(211, 47, 47, 0.7); 
+    color: white;
+    border: none;
+    border-radius: 15px; 
+    padding: 5px 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 0.8rem;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+
+.unequip-btn:hover {
+    background: var(--danger);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 6px rgba(0,0,0,0.4);
+}
+
+.unequip-btn i {
+    font-size: 0.9rem;
 }
