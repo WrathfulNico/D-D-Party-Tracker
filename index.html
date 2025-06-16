@@ -4,46 +4,46 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>D&D Party Tracker</title>
-    <!-- Bibliotecas externas -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/js-yaml/4.1.0/js-yaml.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="styles.css"> 
 </head>
 <body>
     <div class="container">
-        <!-- Encabezado principal -->
         <header>
             <h1>D&D Party Tracker</h1>
             <div class="dragon-icon">🐉</div>
             <p>Seguimiento del estado de tus personajes en partidas de D&D</p>
         </header>
         
-        <!-- Sistema de pestañas para cambiar entre jugadores -->
         <div class="tabs">
-            <div class="tab active" data-tab="player1"><span>Jugador 1</span></div>
-            <div class="tab" data-tab="player2"><span>Jugador 2</span></div>
-            <div class="tab" data-tab="player3"><span>Jugador 3</span></div>
-            <div class="tab" data-tab="player4"><span>Jugador 4</span></div>
+            <div class="tab active" data-tab="player1">
+                <span>Jugador 1</span>
+            </div>
+            <div class="tab" data-tab="player2">
+                <span>Jugador 2</span>
+            </div>
+            <div class="tab" data-tab="player3">
+                <span>Jugador 3</span>
+            </div>
+            <div class="tab" data-tab="player4">
+                <span>Jugador 4</span>
+            </div>
         </div>
         
-        <!-- Contenido de cada jugador (se muestra según la pestaña activa) -->
-        <!-- Jugador 1 -->
         <div class="tab-content active" id="player1-content">
             <div class="upload-section">
                 <div class="file-input-container">
-                    <!-- Input para cargar archivos YML con datos del personaje -->
                     <input type="file" id="fileInput1" accept=".yml" class="player-file" data-player="1">
                     <label for="fileInput1" class="file-input-label">
                         <i class="fas fa-file-upload"></i> Cargar YML
                     </label>
                 </div>
-                <!-- Botón para guardar el estado actual del personaje -->
                 <button class="save-btn" onclick="savePlayerData(0)">
                     <i class="fas fa-save"></i> Guardar Estado
                 </button>
                 <div class="file-info" id="fileInfo1">No se ha cargado ningún archivo</div>
             </div>
-            <!-- Sección donde se mostrarán los datos del personaje -->
             <div class="player-section" id="player1-data">
                 <div class="no-data">
                     <h3>No hay datos disponibles</h3>
@@ -52,18 +52,75 @@
             </div>
         </div>
         
-        <!-- Estructura repetida para los jugadores 2-4 (omitida por brevedad) -->
-        <!-- ... -->
+        <div class="tab-content" id="player2-content">
+            <div class="upload-section">
+                <div class="file-input-container">
+                    <input type="file" id="fileInput2" accept=".yml" class="player-file" data-player="2">
+                    <label for="fileInput2" class="file-input-label">
+                        <i class="fas fa-file-upload"></i> Cargar YML
+                    </label>
+                </div>
+                <button class="save-btn" onclick="savePlayerData(1)">
+                    <i class="fas fa-save"></i> Guardar Estado
+                </button>
+                <div class="file-info" id="fileInfo2">No se ha cargado ningún archivo</div>
+            </div>
+            <div class="player-section" id="player2-data">
+                <div class="no-data">
+                    <h3>No hay datos disponibles</h3>
+                    <p>Carga un archivo YML para mostrar la información del jugador</p>
+                </div>
+            </div>
+        </div>
         
-        <!-- Pie de página informativo -->
+        <div class="tab-content" id="player3-content">
+            <div class="upload-section">
+                <div class="file-input-container">
+                    <input type="file" id="fileInput3" accept=".yml" class="player-file" data-player="3">
+                    <label for="fileInput3" class="file-input-label">
+                        <i class="fas fa-file-upload"></i> Cargar YML
+                    </label>
+                </div>
+                <button class="save-btn" onclick="savePlayerData(2)">
+                    <i class="fas fa-save"></i> Guardar Estado
+                </button>
+                <div class="file-info" id="fileInfo3">No se ha cargado ningún archivo</div>
+            </div>
+            <div class="player-section" id="player3-data">
+                <div class="no-data">
+                    <h3>No hay datos disponibles</h3>
+                    <p>Carga un archivo YML para mostrar la información del jugador</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="tab-content" id="player4-content">
+            <div class="upload-section">
+                <div class="file-input-container">
+                    <input type="file" id="fileInput4" accept=".yml" class="player-file" data-player="4">
+                    <label for="fileInput4" class="file-input-label">
+                        <i class="fas fa-file-upload"></i> Cargar YML
+                    </label>
+                </div>
+                <button class="save-btn" onclick="savePlayerData(3)">
+                    <i class="fas fa-save"></i> Guardar Estado
+                </button>
+                <div class="file-info" id="fileInfo4">No se ha cargado ningún archivo</div>
+            </div>
+            <div class="player-section" id="player4-data">
+                <div class="no-data">
+                    <h3>No hay datos disponibles</h3>
+                    <p>Carga un archivo YML para mostrar la información del jugador</p>
+                </div>
+            </div>
+        </div>
+        
         <footer>
             <p>Creado para maestros de Dungeons & Dragons | Los datos se procesan localmente</p>
         </footer>
     </div>
     
-    <!-- ===== MODALES INTERACTIVOS ===== -->
-    
-    <!-- Modal para agregar consumibles (pociones, etc.) -->
+    <!-- Modal para agregar consumible -->
     <div class="modal" id="consumableModal">
         <div class="modal-content">
             <span class="close-modal" onclick="closeModal('consumableModal')">&times;</span>
@@ -80,12 +137,11 @@
         </div>
     </div>
     
-    <!-- Modal para agregar objetos al inventario -->
+    <!-- Modal para agregar objeto -->
     <div class="modal" id="itemModal">
         <div class="modal-content">
             <span class="close-modal" onclick="closeModal('itemModal')">&times;</span>
             <h2>Agregar Objeto</h2>
-            <!-- Campos para diferentes tipos de objetos -->
             <div class="form-group">
                 <label for="itemName">Nombre del Objeto</label>
                 <input type="text" id="itemName" placeholder="Espada larga, Armadura de cuero, etc.">
@@ -102,7 +158,6 @@
                 </select>
             </div>
             
-            <!-- Campos específicos para armas -->
             <div class="item-type-fields" id="weaponFields">
                 <div class="form-group">
                     <label for="weaponDamage">Daño</label>
@@ -114,7 +169,6 @@
                 </div>
             </div>
             
-            <!-- Campos específicos para armaduras -->
             <div class="item-type-fields" id="armorFields">
                 <div class="form-group">
                     <label for="armorClass">Clase de Armadura (CA)</label>
@@ -129,7 +183,6 @@
                 </div>
             </div>
             
-            <!-- Campos específicos para escudos -->
             <div class="item-type-fields" id="shieldFields">
                 <div class="form-group">
                     <label for="shieldBonus">Bonus de CA</label>
@@ -137,7 +190,6 @@
                 </div>
             </div>
             
-            <!-- Propiedades adicionales para cualquier objeto -->
             <div class="form-group">
                 <label for="itemProperties">Propiedades Adicionales</label>
                 <textarea id="itemProperties" placeholder="Describe propiedades especiales del objeto" rows="3"></textarea>
@@ -147,23 +199,22 @@
         </div>
     </div>
     
-    <!-- Modal para gestionar estados alterados (veneno, parálisis, etc.) -->
+    <!-- Modal para estados alterados -->
     <div class="modal" id="conditionModal">
         <div class="modal-content">
             <span class="close-modal" onclick="closeModal('conditionModal')">&times;</span>
             <h2>Estados Alterados</h2>
             <p>Selecciona los estados que afectan al personaje</p>
             
-            <!-- Contenedor dinámico para condiciones -->
             <div class="condition-grid" id="conditionGrid">
-                <!-- Las condiciones se cargarán dinámicamente con JavaScript -->
+                <!-- Las condiciones se cargarán dinámicamente aquí -->
             </div>
             
             <button class="submit-btn" onclick="saveConditions()">Guardar Estados</button>
         </div>
     </div>
     
-    <!-- Modal para editar experiencia del personaje -->
+    <!-- Modal para editar experiencia -->
     <div class="modal" id="xpModal">
         <div class="modal-content">
             <span class="close-modal" onclick="closeModal('xpModal')">&times;</span>
@@ -175,8 +226,6 @@
             <button class="submit-btn" onclick="saveXP()">Guardar Experiencia</button>
         </div>
     </div>
-    
-    <!-- Script principal de la aplicación -->
     <script src="script.js"></script>
 </body>
 </html>

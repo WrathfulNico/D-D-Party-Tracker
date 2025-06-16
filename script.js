@@ -1,11 +1,12 @@
-// Array para almacenar los datos de los jugadores (máximo 4 jugadores)
+
+// Array para almacenar los datos de los jugadores
 const playersData = [{}, {}, {}, {}];
 
-// Variables para manejar el estado global de la aplicación
-let currentPlayerIndex = 0;  // Índice del jugador actualmente activo
-let currentItemIndex = -1;   // Índice del objeto seleccionado
+// Variables para estados alterados
+let currentPlayerIndex = 0;
+let currentItemIndex = -1;
 
-// Lista de estados alterados comunes en D&D 5e
+// Lista de estados alterados comunes en D&D
 const conditionOptions = [
     "Acechado", "Agarrado", "Agotado", "Asustado", "Aturdido", 
     "Cegado", "Enfermo", "Ensordecido", "Hechizado", "Inconsciente", 
@@ -13,13 +14,13 @@ const conditionOptions = [
     "Restringido", "Venenado", "Concentración", "Maldito", "Poseído"
 ];
 
-// Referencias a elementos clave del DOM
+// Referencias a elementos del DOM
 const tabs = document.querySelectorAll('.tab');
 const tabContents = document.querySelectorAll('.tab-content');
 const fileInputs = document.querySelectorAll('.player-file');
 const fileInfos = document.querySelectorAll('.file-info');
 
-// Configurar event listeners para las pestañas de jugadores
+// Manejar clic en pestañas
 tabs.forEach(tab => {
     tab.addEventListener('click', () => {
         // Remover clase activa de todas las pestañas y contenidos
@@ -33,7 +34,7 @@ tabs.forEach(tab => {
     });
 });
 
-// Configurar event listeners para los inputs de archivo
+// Manejar la selección de archivos para cada jugador
 fileInputs.forEach(input => {
     input.addEventListener('change', function(e) {
         const file = e.target.files[0];
@@ -49,12 +50,12 @@ fileInputs.forEach(input => {
         
         reader.onload = function(e) {
             try {
-                // Parsear el contenido YAML a objeto JavaScript
                 const data = jsyaml.load(e.target.result);
                 playersData[playerIndex] = data;
                 
-                // Normalizar el formato de estados para compatibilidad
+                // Normalizar estados para compatibilidad
                 if (data.estados) {
+                    // Convertir estados de formato antiguo a nuevo si es necesario
                     data.estados = data.estados.map(est => {
                         if (typeof est === 'string') {
                             return { estado: est };
@@ -65,7 +66,7 @@ fileInputs.forEach(input => {
                     data.estados = [];
                 }
                 
-                // Inicializar atributos si no existen
+                // Asegurar que los atributos existan
                 if (!data.atributos) {
                     data.atributos = {
                         fuerza: 10,
@@ -77,12 +78,12 @@ fileInputs.forEach(input => {
                     };
                 }
                 
-                // Inicializar experiencia si no existe
+                // Asegurar que la experiencia exista
                 if (!data.experiencia) {
                     data.experiencia = 0;
                 }
                 
-                // Actualizar el nombre de la pestaña si está disponible
+                // Actualizar el nombre de la pestaña
                 if (data.nombre) {
                     document.querySelector(`.tab[data-tab="player${playerIndex+1}"] span`).textContent = data.nombre;
                 }
@@ -99,12 +100,11 @@ fileInputs.forEach(input => {
     });
 });
 
-// Función principal para renderizar los datos de un jugador
+// Función para renderizar los datos de un jugador específico
 function renderPlayer(playerIndex) {
     const playerData = playersData[playerIndex];
     const playerContent = document.getElementById(`player${playerIndex+1}-data`);
     
-    // Mostrar mensaje si no hay datos disponibles
     if (!playerData || Object.keys(playerData).length === 0) {
         playerContent.innerHTML = `
             <div class="no-data">
@@ -115,7 +115,6 @@ function renderPlayer(playerIndex) {
         return;
     }
     
-    // Calcular porcentaje de salud y color de la barra
     const healthPercentage = (playerData.salud.actual / playerData.salud.máxima) * 100;
     const healthColor = healthPercentage > 70 ? '#4caf50' : 
                         healthPercentage > 30 ? '#ff9800' : '#d32f2f';
@@ -143,7 +142,7 @@ function renderPlayer(playerIndex) {
         }
     }
     
-    // Generar HTML para los consumibles
+    // ===== ACTUALIZADO: Generar HTML para los consumibles como en v15.html =====
     let consumablesHTML = '';
     if (playerData.inventario && playerData.inventario.consumibles && playerData.inventario.consumibles.length > 0) {
         playerData.inventario.consumibles.forEach((item, itemIndex) => {
@@ -170,14 +169,13 @@ function renderPlayer(playerIndex) {
         });
     }
     
-    // Generar HTML para los objetos del inventario
+    // Generar HTML para los objetos
     let itemsHTML = '';
     if (playerData.inventario && playerData.inventario.objetos && playerData.inventario.objetos.length > 0) {
         playerData.inventario.objetos.forEach((item, itemIndex) => {
             let details = '';
             let properties = '';
             
-            // Agregar detalles específicos según el tipo de objeto
             if (item.tipo === "arma") {
                 details = `<p><strong>Daño:</strong> ${item.daño}</p>`;
             } else if (item.tipo === "armadura") {
@@ -186,7 +184,6 @@ function renderPlayer(playerIndex) {
                 details = `<p><strong>Bonus CA:</strong> +${item.bonus_ca}</p>`;
             }
             
-            // Agregar propiedades si están disponibles
             if (item.propiedades && item.propiedades.length > 0) {
                 properties = `<p><strong>Propiedades:</strong> ${item.propiedades.join(', ')}</p>`;
             }
@@ -223,10 +220,11 @@ function renderPlayer(playerIndex) {
         }
     }
     
-    // Generar HTML para los estados alterados
+    // Generar HTML para estados alterados
     let conditionsHTML = '';
     if (playerData.estados && playerData.estados.length > 0) {
         playerData.estados.forEach((condicion, index) => {
+            // Manejar tanto formato antiguo como nuevo
             const estado = condicion.estado || condicion;
             conditionsHTML += `
                 <div class="condition">
@@ -239,7 +237,7 @@ function renderPlayer(playerIndex) {
         });
     }
     
-    // Generar HTML para los atributos
+    // Generar HTML para atributos
     let attributesHTML = '';
     if (playerData.atributos) {
         const attributes = [
@@ -267,9 +265,9 @@ function renderPlayer(playerIndex) {
         });
     }
     
-    // Construir el HTML completo para la sección del jugador
+    // Nueva estructura organizada
     playerContent.innerHTML = `
-        <!-- Sección de información del personaje -->
+        <!-- Fila 1: Personaje -->
         <div class="character-section">
             <div class="section-title">Personaje</div>
             <div class="character-name">${playerData.nombre}</div>
@@ -281,7 +279,7 @@ function renderPlayer(playerIndex) {
                 </div>
             </div>
             
-            <!-- Sección de estados alterados -->
+            <!-- Estados alterados debajo de clase y nivel -->
             <div class="conditions-section">
                 ${conditionsHTML}
                 <button class="add-condition-btn" onclick="openConditionModal(${playerIndex})">
@@ -289,7 +287,6 @@ function renderPlayer(playerIndex) {
                 </button>
             </div>
             
-            <!-- Sección de salud -->
             <div class="health-section">
                 <div class="health-bar">
                     <div class="health-fill" style="width: ${healthPercentage}%; background-color: ${healthColor};"></div>
@@ -301,7 +298,7 @@ function renderPlayer(playerIndex) {
                     <button class="control-btn plus" onclick="adjustHealth(${playerIndex}, 1)">+</button>
                 </div>
                 
-                <!-- Sección de experiencia -->
+                <!-- Experiencia con botón de edición -->
                 <div class="experience-section">
                     <div class="experience-title">
                         Experiencia 
@@ -312,7 +309,7 @@ function renderPlayer(playerIndex) {
                     <div class="experience-value" id="xp-${playerIndex}">${playerData.experiencia || 0}</div>
                 </div>
                 
-                <!-- Sección de atributos -->
+                <!-- Atributos -->
                 <div class="attributes-section">
                     <div class="section-title">Atributos</div>
                     <div class="attributes-grid">
@@ -322,8 +319,9 @@ function renderPlayer(playerIndex) {
             </div>
         </div>
         
-        <!-- Sección de equipamiento y conjuros -->
+        <!-- Fila 2: Equipamiento y Conjuros (ahora más anchos) -->
         <div class="player-layout">
+            <!-- Columna: Equipamiento y Conjuros -->
             <div class="equipment-column">
                 <div class="equipment-section">
                     <div class="section-title">Equipamiento</div>
@@ -332,6 +330,7 @@ function renderPlayer(playerIndex) {
                     </div>
                 </div>
                 
+                <!-- Espacios de Conjuros debajo de Equipamiento -->
                 <div class="spell-section">
                     <div class="section-title">Espacios de Conjuros</div>
                     ${spellSlotsHTML || '<p>No tiene espacios de conjuros</p>'}
@@ -339,9 +338,9 @@ function renderPlayer(playerIndex) {
             </div>
         </div>
         
-        <!-- Sección de inventario -->
+        <!-- Fila 3: Consumibles e Inventario (50% cada uno) -->
         <div class="inventory-row">
-            <!-- Subsección de consumibles -->
+            <!-- Consumibles -->
             <div class="card">
                 <div class="card-header">
                     <h3 class="card-title">Consumibles</h3>
@@ -354,7 +353,7 @@ function renderPlayer(playerIndex) {
                 </div>
             </div>
             
-            <!-- Subsección de objetos -->
+            <!-- Inventario -->
             <div class="card">
                 <div class="card-header">
                     <h3 class="card-title">Inventario</h3>
@@ -379,17 +378,17 @@ function generateSpellCircles(count) {
     return `<div class="spell-circles">${circles}</div>`;
 }
 
-// Función para ajustar la salud del personaje
+// Función para ajustar la salud
 function adjustHealth(playerIndex, amount) {
     const playerData = playersData[playerIndex];
     if (!playerData || !playerData.salud) return;
     
-    // Calcular nuevo valor de salud respetando los límites
     let newHealth = playerData.salud.actual + amount;
+    // Asegurarse de que está entre 0 y el máximo
     newHealth = Math.max(0, Math.min(newHealth, playerData.salud.máxima));
     playerData.salud.actual = newHealth;
     
-    // Actualizar la barra de salud en la UI
+    // Actualizar la barra de salud
     const healthPercentage = (newHealth / playerData.salud.máxima) * 100;
     const healthColor = healthPercentage > 70 ? '#4caf50' : 
                         healthPercentage > 30 ? '#ff9800' : '#d32f2f';
@@ -407,28 +406,28 @@ function adjustLevel(playerIndex, amount) {
     const playerData = playersData[playerIndex];
     if (!playerData) return;
     
-    // Inicializar nivel si no existe
     if (!playerData.nivel) playerData.nivel = 1;
-    
-    // Calcular nuevo nivel (mínimo 1)
     let newLevel = parseInt(playerData.nivel) + amount;
-    newLevel = Math.max(1, newLevel);
+    newLevel = Math.max(1, newLevel); // Nivel mínimo 1
     
     playerData.nivel = newLevel;
     
-    // Actualizar la UI
+    // Actualizar la visualización del nivel
     const levelElement = document.querySelector(`#player${playerIndex+1}-data .class-level`);
     if (levelElement) {
         levelElement.textContent = `${playerData.clase || 'Sin clase'} - Nivel ${newLevel}`;
     }
 }
 
-// Función para ajustar los espacios de conjuros
+// Función para ajustar los espacios de conjuros - VERSIÓN CORREGIDA
 function adjustSpellSlot(playerIndex, level, amount) {
     const playerData = playersData[playerIndex];
-    if (!playerData || !playerData.espacios_conjuros || !(level in playerData.espacios_conjuros)) return;
     
-    // Calcular nuevo valor (no puede ser negativo)
+    // Verificación corregida: usa hasOwnProperty para detectar propiedades con valor 0
+    if (!playerData || !playerData.espacios_conjuros || !playerData.espacios_conjuros.hasOwnProperty(level)) {
+        return;
+    }
+    
     let newValue = playerData.espacios_conjuros[level] + amount;
     newValue = Math.max(0, newValue);
     playerData.espacios_conjuros[level] = newValue;
@@ -436,7 +435,7 @@ function adjustSpellSlot(playerIndex, level, amount) {
     // Actualizar el valor en pantalla
     document.getElementById(`spell-${playerIndex}-${level}`).textContent = newValue;
     
-    // Actualizar la representación visual
+    // Actualizar los círculos visuales
     const spellVisual = document.querySelector(`#player${playerIndex+1}-data .spell-level:has(#spell-${playerIndex}-${level}) .spell-visual`);
     if (spellVisual) {
         spellVisual.innerHTML = generateSpellCircles(newValue);
@@ -453,29 +452,27 @@ function adjustConsumable(playerIndex, itemIndex, amount) {
     if (newValue < 0) newValue = 0;
     consumable.cantidad = newValue;
     
-    // Actualizar el contador en la UI
+    // Actualizar el contador en el DOM
     const consumableElement = document.getElementById(`consumable-${playerIndex}-${itemIndex}`);
     if (consumableElement) {
         consumableElement.textContent = newValue;
     }
 }
 
-// Función para abrir el modal de experiencia
+// Función para abrir modal de experiencia
 function openXPModal(playerIndex) {
     currentPlayerIndex = playerIndex;
     const playerData = playersData[playerIndex];
     
-    // Cargar el valor actual de experiencia
     document.getElementById('xpValue').value = playerData.experiencia || 0;
     document.getElementById('xpModal').style.display = 'flex';
 }
 
-// Función para guardar la experiencia
+// Función para guardar experiencia
 function saveXP() {
     const playerData = playersData[currentPlayerIndex];
     const xpValue = parseInt(document.getElementById('xpValue').value) || 0;
     
-    // Validar que no sea negativa
     if (xpValue < 0) {
         alert('La experiencia no puede ser negativa');
         return;
@@ -483,7 +480,7 @@ function saveXP() {
     
     playerData.experiencia = xpValue;
     
-    // Actualizar la UI
+    // Actualizar la visualización de la experiencia
     const xpElement = document.getElementById(`xp-${currentPlayerIndex}`);
     if (xpElement) {
         xpElement.textContent = xpValue;
@@ -497,18 +494,17 @@ function adjustAttribute(playerIndex, attribute, amount) {
     const playerData = playersData[playerIndex];
     if (!playerData || !playerData.atributos) return;
     
-    // Asegurar que el atributo existe
+    // Asegurarnos de que el atributo existe
     if (playerData.atributos[attribute] === undefined) {
         playerData.atributos[attribute] = 10;
     }
     
-    // Calcular nuevo valor (mínimo 1)
     let newValue = parseInt(playerData.atributos[attribute]) + amount;
-    newValue = Math.max(1, newValue);
+    newValue = Math.max(1, newValue); // Valor mínimo 1
     
     playerData.atributos[attribute] = newValue;
     
-    // Actualizar la UI
+    // Actualizar la visualización del atributo
     const attrElement = document.getElementById(`attr-${playerIndex}-${attribute}`);
     if (attrElement) {
         attrElement.textContent = newValue;
@@ -524,7 +520,7 @@ function savePlayerData(playerIndex) {
     }
     
     try {
-        // Convertir datos a formato YAML
+        // Convertir a YAML
         const yamlData = jsyaml.dump(playerData);
         
         // Crear un blob con los datos
@@ -538,13 +534,13 @@ function savePlayerData(playerIndex) {
         document.body.appendChild(a);
         a.click();
         
-        // Limpiar recursos
+        // Limpiar
         setTimeout(() => {
             document.body.removeChild(a);
             URL.revokeObjectURL(url);
         }, 100);
         
-        // Actualizar mensaje de información
+        // Actualizar mensaje
         const fileInfo = document.getElementById(`fileInfo${playerIndex+1}`);
         fileInfo.textContent = `Datos guardados correctamente! ${new Date().toLocaleTimeString()}`;
         fileInfo.style.color = '#4caf50';
@@ -557,7 +553,7 @@ function savePlayerData(playerIndex) {
     }
 }
 
-// Funciones para manejar modales
+// Funciones para modales
 function openModal(modalId, playerIndex) {
     currentPlayerIndex = playerIndex;
     document.getElementById(modalId).style.display = 'flex';
@@ -567,7 +563,6 @@ function closeModal(modalId) {
     document.getElementById(modalId).style.display = 'none';
 }
 
-// Función para mostrar campos específicos según el tipo de objeto
 function showItemFields() {
     // Ocultar todos los campos específicos primero
     document.querySelectorAll('.item-type-fields').forEach(el => {
@@ -590,29 +585,24 @@ function addConsumable() {
     const name = document.getElementById('consumableName').value;
     const quantity = parseInt(document.getElementById('consumableQuantity').value) || 1;
     
-    // Validar que se haya ingresado un nombre
     if (!name) {
         alert('Por favor ingresa un nombre para el consumible');
         return;
     }
     
     const playerData = playersData[currentPlayerIndex];
-    
-    // Inicializar inventario si es necesario
     if (!playerData.inventario) playerData.inventario = {};
     if (!playerData.inventario.consumibles) playerData.inventario.consumibles = [];
     
-    // Agregar nuevo consumible
     playerData.inventario.consumibles.push({
         nombre: name,
         cantidad: quantity
     });
     
-    // Actualizar la vista y cerrar modal
     renderPlayer(currentPlayerIndex);
     closeModal('consumableModal');
     
-    // Limpiar el formulario
+    // Limpiar formulario
     document.getElementById('consumableName').value = '';
     document.getElementById('consumableQuantity').value = '1';
 }
@@ -623,7 +613,6 @@ function addItem() {
     const type = document.getElementById('itemType').value;
     const properties = document.getElementById('itemProperties').value;
     
-    // Validar que se haya ingresado un nombre
     if (!name) {
         alert('Por favor ingresa un nombre para el objeto');
         return;
@@ -634,7 +623,7 @@ function addItem() {
         tipo: type
     };
     
-    // Agregar propiedades específicas según el tipo
+    // Añadir propiedades específicas según el tipo
     if (type === 'arma') {
         newItem.daño = document.getElementById('weaponDamage').value || '1d6';
         if (document.getElementById('weaponProperties').value) {
@@ -647,26 +636,21 @@ function addItem() {
         newItem.bonus_ca = parseInt(document.getElementById('shieldBonus').value) || 2;
     }
     
-    // Agregar propiedades adicionales si existen
     if (properties) {
         if (!newItem.propiedades) newItem.propiedades = [];
         newItem.propiedades.push(properties);
     }
     
     const playerData = playersData[currentPlayerIndex];
-    
-    // Inicializar inventario si es necesario
     if (!playerData.inventario) playerData.inventario = {};
     if (!playerData.inventario.objetos) playerData.inventario.objetos = [];
     
-    // Agregar nuevo objeto
     playerData.inventario.objetos.push(newItem);
     
-    // Actualizar la vista y cerrar modal
     renderPlayer(currentPlayerIndex);
     closeModal('itemModal');
     
-    // Limpiar el formulario
+    // Limpiar formulario
     document.getElementById('itemName').value = '';
     document.getElementById('itemType').value = 'arma';
     document.getElementById('itemProperties').value = '';
@@ -681,7 +665,6 @@ function deleteItem(playerIndex, type, itemIndex) {
     
     const playerData = playersData[playerIndex];
     
-    // Eliminar según el tipo de objeto
     if (type === 'consumible') {
         if (playerData.inventario && playerData.inventario.consumibles) {
             playerData.inventario.consumibles.splice(itemIndex, 1);
@@ -692,7 +675,6 @@ function deleteItem(playerIndex, type, itemIndex) {
         }
     }
     
-    // Actualizar la vista
     renderPlayer(playerIndex);
 }
 
@@ -701,17 +683,15 @@ function autoEquipItem(playerIndex, type, itemIndex) {
     const playerData = playersData[playerIndex];
     let item;
     
-    // Manejar consumibles (reducir cantidad)
     if (type === 'consumible') {
         if (!playerData.inventario || !playerData.inventario.consumibles) return;
         item = playerData.inventario.consumibles[itemIndex];
         
-        // Reducir cantidad
+        // Para consumibles, simplemente reducimos la cantidad
         if (item.cantidad > 0) {
             item.cantidad -= 1;
         }
         
-        // Eliminar si la cantidad llega a cero
         if (item.cantidad <= 0) {
             playerData.inventario.consumibles.splice(itemIndex, 1);
         }
@@ -720,7 +700,6 @@ function autoEquipItem(playerIndex, type, itemIndex) {
         return;
     }
     
-    // Manejar objetos (equipar en slot apropiado)
     if (!playerData.inventario || !playerData.inventario.objetos) return;
     item = playerData.inventario.objetos[itemIndex];
     
@@ -753,7 +732,6 @@ function autoEquipItem(playerIndex, type, itemIndex) {
     // Equipar el objeto en el slot seleccionado
     playerData.equipado[slot] = item.nombre;
     
-    // Actualizar la vista
     renderPlayer(playerIndex);
 }
 
@@ -765,7 +743,6 @@ function openConditionModal(playerIndex) {
     // Generar opciones de condiciones
     let conditionsHTML = '';
     conditionOptions.forEach(condition => {
-        // Comprobar si el estado ya está activo
         const isSelected = playerData.estados && 
             playerData.estados.some(est => {
                 const estadoName = est.estado || est;
@@ -780,7 +757,6 @@ function openConditionModal(playerIndex) {
         `;
     });
     
-    // Actualizar el modal y mostrarlo
     document.getElementById('conditionGrid').innerHTML = conditionsHTML;
     document.getElementById('conditionModal').style.display = 'flex';
 }
@@ -800,7 +776,6 @@ function saveConditions() {
         playerData.estados.push({ estado: el.textContent.trim() });
     });
     
-    // Actualizar la vista y cerrar modal
     renderPlayer(currentPlayerIndex);
     closeModal('conditionModal');
 }
@@ -814,13 +789,13 @@ function removeCondition(playerIndex, conditionIndex) {
     }       
 }
 
-// Inicializar la aplicación cuando el DOM esté cargado
+// Inicializar la aplicación
 document.addEventListener('DOMContentLoaded', () => {       
     // Renderizar datos iniciales para cada jugador
     for (let i = 0; i < 4; i++) {
         renderPlayer(i);
     }
     
-    // Mostrar campos de arma por defecto en el modal de objetos
+    // Mostrar campos de arma por defecto
     document.getElementById('weaponFields').style.display = 'block';
 });
