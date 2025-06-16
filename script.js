@@ -266,107 +266,107 @@ function renderPlayer(playerIndex) {
     }
     
     // Nueva estructura organizada
-    playerContent.innerHTML = `
-        <!-- Fila 1: Personaje -->
-        <div class="character-section">
-            <div class="section-title">Personaje</div>
-            <div class="character-name">${playerData.nombre}</div>
-            <div class="character-info">
-                <div class="class-level">${playerData.clase || 'Sin clase'} - Nivel ${playerData.nivel || '1'}</div>
-                <div class="level-controls">
-                    <button class="control-btn level-down small-btn" onclick="adjustLevel(${playerIndex}, -1)">-</button>
-                    <button class="control-btn level-up small-btn" onclick="adjustLevel(${playerIndex}, 1)">+</button>
-                </div>
-            </div>
-            
-            <!-- Estados alterados debajo de clase y nivel -->
-            <div class="conditions-section">
-                ${conditionsHTML}
-                <button class="add-condition-btn" onclick="openConditionModal(${playerIndex})">
-                    <i class="fas fa-plus"></i> Agregar Estado
-                </button>
-            </div>
-            
-            <div class="health-section">
-                <div class="health-bar">
-                    <div class="health-fill" style="width: ${healthPercentage}%; background-color: ${healthColor};"></div>
-                    <div class="health-text">${playerData.salud.actual} / ${playerData.salud.máxima}</div>
-                </div>
-                
-                <div class="health-controls">
-                    <button class="control-btn minus" onclick="adjustHealth(${playerIndex}, -1)">-</button>
-                    <button class="control-btn plus" onclick="adjustHealth(${playerIndex}, 1)">+</button>
-                </div>
-                
-                <!-- Experiencia con botón de edición -->
-                <div class="experience-section">
-                    <div class="experience-title">
-                        Experiencia 
-                        <button class="edit-xp-btn" onclick="openXPModal(${playerIndex})">
-                            <i class="fas fa-edit"></i> Editar
-                        </button>
-                    </div>
-                    <div class="experience-value" id="xp-${playerIndex}">${playerData.experiencia || 0}</div>
-                </div>
-                
-                <!-- Atributos -->
-                <div class="attributes-section">
-                    <div class="section-title">Atributos</div>
-                    <div class="attributes-grid">
-                        ${attributesHTML}
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Fila 2: Equipamiento y Conjuros (ahora más anchos) -->
-        <div class="player-layout">
-            <!-- Columna: Equipamiento y Conjuros -->
-            <div class="equipment-column">
-                <div class="equipment-section">
-                    <div class="section-title">Equipamiento</div>
-                    <div class="equipped-items">
-                        ${equippedHTML || '<p>No hay objetos equipados</p>'}
-                    </div>
-                </div>
-                
-                <!-- Espacios de Conjuros debajo de Equipamiento -->
-                <div class="spell-section">
-                    <div class="section-title">Espacios de Conjuros</div>
-                    ${spellSlotsHTML || '<p>No tiene espacios de conjuros</p>'}
-                </div>
-            </div>
-        </div>
-        
-        <!-- Fila 3: Consumibles e Inventario (50% cada uno) -->
-        <div class="inventory-row">
-            <!-- Consumibles -->
-            <div class="card">
-                <div class="card-header">
-                    <h3 class="card-title">Consumibles</h3>
-                    <button class="add-item-btn" onclick="openModal('consumableModal', ${playerIndex})">
-                        <i class="fas fa-plus"></i> Nuevo
-                    </button>
-                </div>
-                <div class="inventory-grid">
-                    ${consumablesHTML || '<p>No hay consumibles</p>'}
-                </div>
-            </div>
-            
-            <!-- Inventario -->
-            <div class="card">
-                <div class="card-header">
-                    <h3 class="card-title">Inventario</h3>
-                    <button class="add-item-btn" onclick="openModal('itemModal', ${playerIndex})">
-                        <i class="fas fa-plus"></i> Nuevo
-                    </button>
-                </div>
-                <div class="inventory-grid">
-                    ${itemsHTML || '<p>No hay objetos</p>'}
-                </div>
-            </div>
-        </div>
-    `;
+	playerContent.innerHTML = `
+		<!-- Fila 1: Personaje -->
+		<div class="character-section">
+			<div class="section-title">Personaje</div>
+			<div class="character-name">${playerData.nombre}</div>
+			<div class="character-info">
+				<div class="class-level">${playerData.clase || 'Sin clase'} - Nivel ${playerData.nivel || '1'}</div>
+				<div class="level-controls">
+					<button class="control-btn level-down small-btn" onclick="adjustLevel(${playerIndex}, -1)">-</button>
+					<button class="control-btn level-up small-btn" onclick="adjustLevel(${playerIndex}, 1)">+</button>
+				</div>
+			</div>
+			
+			<!-- Estados alterados debajo de clase y nivel -->
+			<div class="conditions-section">
+				${conditionsHTML}
+				<button class="add-condition-btn" onclick="openConditionModal(${playerIndex})">
+					<i class="fas fa-plus"></i> Agregar Estado
+				</button>
+			</div>
+			
+			<div class="health-section">
+				<div class="health-bar">
+					<div class="health-fill" style="width: ${healthPercentage}%; background-color: ${healthColor};"></div>
+					<div class="health-text">${playerData.salud.actual} / ${playerData.salud.máxima}</div>
+				</div>
+				
+				<div class="health-controls">
+					<button class="control-btn minus" onclick="adjustHealth(${playerIndex}, -1)">-</button>
+					<button class="control-btn plus" onclick="adjustHealth(${playerIndex}, 1)">+</button>
+				</div>
+				
+				<!-- Experiencia con botón de edición -->
+				<div class="experience-section">
+					<div class="experience-title">
+						Experiencia 
+						<button class="edit-xp-btn" onclick="openXPModal(${playerIndex})">
+							<i class="fas fa-edit"></i> Editar
+						</button>
+					</div>
+					<div class="experience-value" id="xp-${playerIndex}">${playerData.experiencia || 0}</div>
+				</div>
+			</div>
+			
+			<!-- Atributos -->
+			<div class="attributes-section">
+				<div class="section-title">Atributos</div>
+				<div class="attributes-grid">
+					${attributesHTML}
+				</div>
+			</div>
+			
+			<!-- MOVIDO: Equipamiento debajo de los Atributos -->
+			<div class="equipment-section">
+				<div class="section-title">Equipamiento</div>
+				<div class="equipped-items">
+					${equippedHTML || '<p>No hay objetos equipados</p>'}
+				</div>
+			</div>
+		</div>
+		
+		<!-- Fila 2: Ahora solo Conjuros -->
+		<div class="player-layout">
+			<!-- Columna: Conjuros -->
+			<div class="spell-column">
+				<div class="spell-section">
+					<div class="section-title">Espacios de Conjuros</div>
+					${spellSlotsHTML || '<p>No tiene espacios de conjuros</p>'}
+				</div>
+			</div>
+		</div>
+		
+		<!-- Fila 3: Consumibles e Inventario -->
+		<div class="inventory-row">
+			<!-- Consumibles -->
+			<div class="card">
+				<div class="card-header">
+					<h3 class="card-title">Consumibles</h3>
+					<button class="add-item-btn" onclick="openModal('consumableModal', ${playerIndex})">
+						<i class="fas fa-plus"></i> Nuevo
+					</button>
+				</div>
+				<div class="inventory-grid">
+					${consumablesHTML || '<p>No hay consumibles</p>'}
+				</div>
+			</div>
+			
+			<!-- Inventario -->
+			<div class="card">
+				<div class="card-header">
+					<h3 class="card-title">Inventario</h3>
+					<button class="add-item-btn" onclick="openModal('itemModal', ${playerIndex})">
+						<i class="fas fa-plus"></i> Nuevo
+					</button>
+				</div>
+				<div class="inventory-grid">
+					${itemsHTML || '<p>No hay objetos</p>'}
+				</div>
+			</div>
+		</div>
+	`;
 }
 
 // Función para generar círculos visuales para los espacios de conjuros

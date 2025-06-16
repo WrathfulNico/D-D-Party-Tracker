@@ -354,12 +354,11 @@ h1 {
 
 .equipment-section {
     background: rgba(44, 26, 65, 0.7);
-    border-radius: 10px;
     padding: 15px;
-    border: 1px solid rgba(138, 79, 125, 0.5);
     position: relative;
     z-index: 1;
     width: 100%;
+    margin-top: 25px;
 }
 
 .equipped-items {
@@ -868,6 +867,7 @@ footer {
 /* Estilos para atributos */
 .attributes-section {
     margin-top: 20px;
+    margin-bottom: 15px
 }
 
 .attributes-grid {
